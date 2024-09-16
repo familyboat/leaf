@@ -10,5 +10,5 @@ export default function Leaves() {
         返回主页
       </Link>
     </>
-  )
+  );
 }
