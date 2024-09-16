@@ -10,27 +10,27 @@ import Leaf from "../pages/leaf";
 /**
  * 主页的路径
  */
-export const homePath = '/';
+export const homePath = "/";
 /**
  * 全部 leaf 的路径
  */
-export const leavesPath = '/leaves';
+export const leavesPath = "/leaves";
 /**
  * 创建 leaf 的路径
  */
-export const leafCreatePath = '/leaves/create';
+export const leafCreatePath = "/leaves/create";
 
 export const routes = createHashRouter([
   {
     path: homePath,
-    element: <Home />
+    element: <Home />,
   },
   {
     path: leavesPath,
-    element: <Leaves />
+    element: <Leaves />,
   },
   {
     path: leafCreatePath,
-    element: <Leaf />
-  }
-])
+    element: <Leaf />,
+  },
+]);

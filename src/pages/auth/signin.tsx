@@ -8,6 +8,7 @@ import LoginIcon from "@mui/icons-material/Login";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
 import { signinValidationSchema } from "./validation";
+import { signin } from "../../apis/auth";
 
 const initialValues = {
   username: "",
@@ -15,8 +16,9 @@ const initialValues = {
   confirmPassword: "",
 };
 
-const onSubmit = (values: typeof initialValues) => {
-  console.log("Form values:", values);
+const onSubmit = async (values: typeof initialValues) => {
+  const resp = await signin(values);
+  console.log(resp);
 };
 
 export default function Signin() {
@@ -34,7 +36,7 @@ export default function Signin() {
                 sx={{
                   "& > :not(style)": {
                     m: 1,
-                    maxWidth: '200px',
+                    maxWidth: "200px",
                   },
                   display: "flex",
                   flexDirection: "column",

@@ -9,5 +9,5 @@ export default function Leaf() {
         返回主页
       </Link>
     </>
-  )
+  );
 }

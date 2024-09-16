@@ -8,14 +8,16 @@ import LoginIcon from "@mui/icons-material/Login";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
 import { loginValidationSchema } from "./validation";
+import { login } from "../../apis/auth";
 
 const initialValues = {
   username: "",
   password: "",
 };
 
-const onSubmit = (values: typeof initialValues) => {
-  console.log("Form values:", values);
+const onSubmit = async (values: typeof initialValues) => {
+  const resp = await login(values);
+  console.log(resp);
 };
 
 export default function Login() {
@@ -33,7 +35,7 @@ export default function Login() {
                 sx={{
                   "& > :not(style)": {
                     m: 1,
-                    maxWidth: '200px'
+                    maxWidth: "200px",
                   },
                   display: "flex",
                   flexDirection: "column",
