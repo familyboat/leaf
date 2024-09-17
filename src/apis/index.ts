@@ -13,6 +13,6 @@ const createAxiosInstance = (
   });
 };
 
-const api = createAxiosInstance("https://leaf-server.deno.dev", 1);
+const api = createAxiosInstance(import.meta.env.VITE_API_BASE_URL, 1);
 
 export default api;
