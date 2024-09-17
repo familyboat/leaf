@@ -1,11 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { homePath, leafCreatePath, loginPath } from "../../routes";
 import { ReactNode, useEffect, useState } from "react";
 import { getLeaves } from "../../apis/leaf";
 import { Box } from "@mui/material";
 import { orange } from "@mui/material/colors";
 import { isLoginUser } from "../../apis/auth";
-import { toast } from "react-toastify";
 
 export type LeafType = {
   id: string;
@@ -18,9 +17,12 @@ export type LeafType = {
   }
 }
 
+function formatDatetime(datetime: string) {
+  return new Date(datetime).toLocaleString();
+}
+
 export default function Leaves() {
-  const [leaves, setLeaves] = useState<Array<LeafType>>([]);
-  const navigate = useNavigate();
+  const [leaves, setLeaves] = useState<Array<LeafType> | null>(null);
 
   let content: ReactNode;
   if (isLoginUser()) {
@@ -41,29 +43,28 @@ export default function Leaves() {
     )
   }
 
-  useEffect(function() {
-    getLeaves({limit: 10}).then(result => {
-      setLeaves(result)
+  function _get() {
+    getLeaves({limit: 10_000}).then(result => {
+      setLeaves((old) => {
+        old ??= [];
+        return [...old, ...result]
+      })
     }).catch((_e) => {
-      toast('登录信息已过期，请重新登录');
-      navigate(loginPath);
     })
+  }
+
+  useEffect(function() {
+    _get();
   }, [])
 
-  return (
-    <>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between'
-        }}
-      >
-        <Link to={homePath}>
-          返回主页
-        </Link>
-        {content}
-      </Box>
-      {
+  let leavesContent: ReactNode;
+
+  if (leaves === null) {
+    leavesContent = <>加载中</>
+  } else if (leaves.length) {
+    leavesContent = (
+      <>
+        {
         leaves.map(leaf => {
           return (
             <Box key={leaf.id}
@@ -73,9 +74,9 @@ export default function Leaves() {
                 display: "grid",
                 gridTemplateAreas: `
                   "a b"
-                  "a c"
+                  "d c"
                 `,
-                gridTemplateColumns: '100px 1fr',
+                gridTemplateColumns: '180px 1fr',
                 gridTemplateRows: '30px 70px',
               }}
             >
@@ -88,6 +89,16 @@ export default function Leaves() {
                 }}
               >
                 {leaf.user?.username}
+              </Box>
+              <Box
+                sx={{
+                  gridArea: 'd',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                {formatDatetime(leaf.createdAt)}
               </Box>
               <Box
                 sx={{
@@ -111,6 +122,28 @@ export default function Leaves() {
             </Box>
           )
         })
+        }
+      </>
+    )
+  } else {
+    leavesContent = <>暂无叶子</>
+  }
+
+  return (
+    <>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between'
+        }}
+      >
+        <Link to={homePath}>
+          返回主页
+        </Link>
+        {content}
+      </Box>
+      {
+        leavesContent
       }
     </>
   );
