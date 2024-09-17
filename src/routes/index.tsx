@@ -5,7 +5,8 @@
 import { createHashRouter } from "react-router-dom";
 import Home from "../pages/home";
 import Leaves from "../pages/leaves";
-import Leaf from "../pages/leaf";
+import { Login, Signin } from "../pages/auth";
+import CreateLeaf from "../pages/leaf/create";
 
 /**
  * 主页的路径
@@ -20,6 +21,15 @@ export const leavesPath = "/leaves";
  */
 export const leafCreatePath = "/leaves/create";
 
+/**
+ * 登录
+ */
+export const loginPath = '/login';
+/**
+ * 注册
+ */
+export const signinPath = '/signin';
+
 export const routes = createHashRouter([
   {
     path: homePath,
@@ -31,6 +41,14 @@ export const routes = createHashRouter([
   },
   {
     path: leafCreatePath,
-    element: <Leaf />,
+    element: <CreateLeaf />,
   },
+  {
+    path: loginPath,
+    element: <Login />,
+  },
+  {
+    path: signinPath,
+    element: <Signin />
+  }
 ]);

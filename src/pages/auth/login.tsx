@@ -2,33 +2,63 @@
  * 登录表单
  */
 
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import LoginIcon from "@mui/icons-material/Login";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, FormikHelpers } from "formik";
 import { TextField } from "formik-mui";
 import { loginValidationSchema } from "./validation";
 import { login } from "../../apis/auth";
+import { Link, useNavigate } from "react-router-dom";
+import { routes, signinPath } from "../../routes";
+import { AxiosError } from "axios";
+import GeneralError from "../../components/error";
 
 const initialValues = {
   username: "",
   password: "",
 };
 
-const onSubmit = async (values: typeof initialValues) => {
-  const resp = await login(values);
-  console.log(resp);
+const onSubmit = async (
+  values: typeof initialValues,
+  { setSubmitting, setStatus }: FormikHelpers<typeof initialValues>,
+) => {
+  try {
+    const resp = await login(values);
+    const token = resp.data.token;
+    localStorage.setItem('auth_token', token);
+    routes.navigate(-1);
+  } catch (e) {
+    const err = e as AxiosError<{ error: string }>;
+      setStatus(err.response?.data.error);
+  }
+
+  setSubmitting(false);
 };
 
+/**
+ * TODO：检查是否是登录用户
+ */
 export default function Login() {
+  const navigate = useNavigate();
+
+  function back() {
+    navigate(-1);
+  }
+
   return (
     <>
+      <Box>
+        <Button onClick={back} variant="outlined" size="small">
+          返回
+        </Button>
+      </Box>
       <Formik
         initialValues={initialValues}
         validationSchema={loginValidationSchema}
         onSubmit={onSubmit}
       >
-        {({ submitForm, isSubmitting }) => {
+        {({ submitForm, isSubmitting, status }) => {
           return (
             <Form>
               <Box
@@ -42,6 +72,7 @@ export default function Login() {
                   alignItems: "center",
                 }}
               >
+                {status && <GeneralError message={status} />}
                 <Field
                   component={TextField}
                   name="username"
@@ -68,6 +99,9 @@ export default function Login() {
           );
         }}
       </Formik>
+      <Box>
+        还没有账号，现在<Link to={signinPath}>注册</Link>
+      </Box>
     </>
   );
 }

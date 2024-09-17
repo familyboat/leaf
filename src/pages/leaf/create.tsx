@@ -1,41 +1,36 @@
-/**
- * 注册表单
- */
-
-import { Box, Button } from "@mui/material";
-import LoadingButton from "@mui/lab/LoadingButton";
-import LoginIcon from "@mui/icons-material/Login";
-import { Field, Form, Formik, FormikHelpers } from "formik";
-import { TextField } from "formik-mui";
-import { signinValidationSchema } from "./validation";
-import { signin } from "../../apis/auth";
 import { useNavigate } from "react-router-dom";
-import { routes } from "../../routes";
-import { AxiosError } from "axios";
+import { Box, Button } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { Formik, Field, Form, FormikHelpers } from "formik";
 import GeneralError from "../../components/error";
+import { AxiosError } from "axios";
+import { routes } from "../../routes";
+import { TextField } from "formik-mui";
+import PostAddIcon from '@mui/icons-material/PostAdd';
+import { leafValidationSchema } from "./validation";
+import { createLeaf } from "../../apis/leaf";
 
 const initialValues = {
-  username: "",
-  password: "",
-  confirmPassword: "",
+  title: "",
+  content: "",
 };
 
-const onSubmit = async (values: typeof initialValues, { setSubmitting, setStatus }: FormikHelpers<typeof initialValues>,) => {
+const onSubmit = async (
+  values: typeof initialValues,
+  { setSubmitting, setStatus }: FormikHelpers<typeof initialValues>,
+) => {
   try {
-    await signin(values);
+    await createLeaf(values);
     routes.navigate(-1);
   } catch (e) {
     const err = e as AxiosError<{ error: string }>;
-    setStatus(err.response?.data.error);
+      setStatus(err.response?.data.error);
   }
 
   setSubmitting(false);
 };
 
-/**
- * TODO：检查是否是登录用户
- */
-export default function Signin() {
+export default function CreateLeaf() {
   const navigate = useNavigate();
 
   function back() {
@@ -44,14 +39,15 @@ export default function Signin() {
 
   return (
     <>
-      <Box>
-        <Button onClick={back} variant="outlined" size="small">
-          返回
-        </Button>
-      </Box>
+      <Button
+        onClick={back}
+        variant="outlined"
+      >
+        返回
+      </Button>
       <Formik
         initialValues={initialValues}
-        validationSchema={signinValidationSchema}
+        validationSchema={leafValidationSchema}
         onSubmit={onSubmit}
       >
         {({ submitForm, isSubmitting, status }) => {
@@ -67,34 +63,29 @@ export default function Signin() {
                   flexDirection: "column",
                   alignItems: "center",
                 }}
-              > 
+              >
                 {status && <GeneralError message={status} />}
                 <Field
                   component={TextField}
-                  name="username"
+                  name="title"
                   type="text"
-                  label="username"
+                  label="title"
                 />
                 <Field
                   component={TextField}
-                  name="password"
-                  type="password"
-                  label="password"
-                />
-                <Field
-                  component={TextField}
-                  name="confirmPassword"
-                  type="password"
-                  label="comfirm password"
+                  name="content"
+                  multiline
+                  rows={4}
+                  label="content"
                 />
                 <LoadingButton
                   variant="contained"
                   loadingPosition="start"
-                  startIcon={<LoginIcon />}
+                  startIcon={<PostAddIcon />}
                   onClick={submitForm}
                   loading={isSubmitting}
                 >
-                  sign in
+                  post
                 </LoadingButton>
               </Box>
             </Form>
