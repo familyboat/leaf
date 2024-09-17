@@ -2,13 +2,12 @@ import { useNavigate } from "react-router-dom";
 import { Box, Button } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Formik, Field, Form, FormikHelpers } from "formik";
-import GeneralError from "../../components/error";
-import { AxiosError } from "axios";
 import { routes } from "../../routes";
 import { TextField } from "formik-mui";
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import { leafValidationSchema } from "./validation";
 import { createLeaf } from "../../apis/leaf";
+import { toast } from "react-toastify";
 
 const initialValues = {
   title: "",
@@ -17,14 +16,14 @@ const initialValues = {
 
 const onSubmit = async (
   values: typeof initialValues,
-  { setSubmitting, setStatus }: FormikHelpers<typeof initialValues>,
+  { setSubmitting }: FormikHelpers<typeof initialValues>,
 ) => {
   try {
     await createLeaf(values);
     routes.navigate(-1);
   } catch (e) {
-    const err = e as AxiosError<{ error: string }>;
-      setStatus(err.response?.data.error);
+    toast('登录信息已过期，请重新登录');
+    routes.navigate(-1);
   }
 
   setSubmitting(false);
@@ -50,7 +49,7 @@ export default function CreateLeaf() {
         validationSchema={leafValidationSchema}
         onSubmit={onSubmit}
       >
-        {({ submitForm, isSubmitting, status }) => {
+        {({ submitForm, isSubmitting }) => {
           return (
             <Form>
               <Box
@@ -64,7 +63,6 @@ export default function CreateLeaf() {
                   alignItems: "center",
                 }}
               >
-                {status && <GeneralError message={status} />}
                 <Field
                   component={TextField}
                   name="title"

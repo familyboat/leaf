@@ -24,17 +24,11 @@ export function signin(user: {
 /**
  * 用户的登录状态
  */
-export async function isLoginUser(): Promise<boolean> {
+export function isLoginUser(): boolean {
   const token = localStorage.getItem('auth_token');
   if (!token) return false;
 
-  const resp = await api.get('/auth/isLogin', {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    }
-  });
-
-  return resp.data.isLogin;
+  return true;
 }
 
 export function getToken() {

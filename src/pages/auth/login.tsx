@@ -13,6 +13,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { routes, signinPath } from "../../routes";
 import { AxiosError } from "axios";
 import GeneralError from "../../components/error";
+import { toast } from "react-toastify";
 
 const initialValues = {
   username: "",
@@ -27,6 +28,7 @@ const onSubmit = async (
     const resp = await login(values);
     const token = resp.data.token;
     localStorage.setItem('auth_token', token);
+    toast('成功登录');
     routes.navigate(-1);
   } catch (e) {
     const err = e as AxiosError<{ error: string }>;

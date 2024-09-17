@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "../../routes";
 import { AxiosError } from "axios";
 import GeneralError from "../../components/error";
+import { toast } from "react-toastify";
 
 const initialValues = {
   username: "",
@@ -23,6 +24,7 @@ const initialValues = {
 const onSubmit = async (values: typeof initialValues, { setSubmitting, setStatus }: FormikHelpers<typeof initialValues>,) => {
   try {
     await signin(values);
+    toast('账号注册成功');
     routes.navigate(-1);
   } catch (e) {
     const err = e as AxiosError<{ error: string }>;
